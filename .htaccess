@@ -1,2 +1,72 @@
+<IfModule mod_rewrite.c>
+  Options +FollowSymlinks
+  RewriteEngine On
+</IfModule>
+
+# Actividad 3: establecer página de inicio
 RewriteBase /
 DirectoryIndex retos.html
+
+# Actividad 4: si no existe redirigir al inicio
+<IfModule mod_rewrite.c>
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ $1.php
+</IfModule>
+
+ErrorDocument 404 error.html
+
+# Actividad 5
+<RequireAll>
+  Require all granted
+  Require not ip 192.168.6.0/25
+  Require not ip 192.168.6.192/26
+  Require not ip 192.168.9.240/32
+</RequireAll>
+
+Options -Indexes
+
+# Actividad 7: redirección https
+<IfModule mod_rewrite.c>
+#  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# Actividad 6: URL amigables
+RewriteRule ^retos retos.html [L,NC]
+RewriteRule ^error error.html [L,NC]
+RewriteRule ^retgrasup retgrasup.html [L,NC]
+RewriteRule ^retgramed retgramed.html [L,NC]
+RewriteRule ^prograsup prograsup.html [L,NC]
+RewriteRule ^profgrasup profgrasup.html [L,NC]
+RewriteRule ^profgradmed profgradmed.html [L,NC]
+
+<IfModule mod_rewrite.c>
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ $1.html
+</IfModule>
+
+<FilesMatch "(\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist)|~)$">
+  Order allow,deny
+  Deny from all
+  Satisfy All
+</FilesMatch>
+
+# Actividad 8. Mecanismo que mejora la arquitectura del sistema. (comprime los ficheros para reducir la carga de la página)
+<IfModule mod_deflate.c>
+  <IfModule mod_setenvif.c>
+    <IfModule mod_headers.c>
+      SetEnvIfNoCase ^(Accept-EncodXng|X-cept-Encoding|X{15}|~{15}|-{15})$ ^((gzip|deflate)\s*,?\s*)+|[X~-]{4,13}$ HAVE_Accept-Encoding
+      RequestHeader append Accept-Encoding "gzip,deflate" env=HAVE_Accept-Encoding
+    </IfModule>
+  </IfModule>
+</IfModule>
+
+# Actividad 8. Mecanismo que mejora la arquitectura del sistema. (bloquea el acceso a estas extensiones)
+<FilesMatch "(\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist)|~)$">
+  Order allow,deny
+  Deny from all
+  Satisfy All
+</FilesMatch>
